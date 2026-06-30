@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#07080f;--surface:#0f1020;--surface2:#161828;--border:#1e2140;--accent:#6c5ce7;--accent-light:#a29bfe;--text:#ddd8f0;--muted:#7a76a0;--dim:#3a3660}
+:root{--bg:#07080f;--surface:#0f1020;--surface2:#161828;--border:#1e2140;--accent:#6c5ce7;--accent-light:#a29bfe;--text:#ddd8f0;--muted:#7a76a0;--dim:#3a3660;--amber:#c8a030;--amber-light:#e0c068}
 body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
 .stars{position:fixed;inset:0;pointer-events:none;z-index:0}
 .stars::before,.stars::after{content:'';position:absolute;inset:0;background-image:radial-gradient(1px 1px at 20% 30%,rgba(255,255,255,.6),transparent),radial-gradient(1px 1px at 80% 10%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 50% 70%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 10% 60%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 90% 85%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 35% 15%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 65% 45%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 75% 55%,rgba(255,255,255,.6),transparent),radial-gradient(1.5px 1.5px at 25% 75%,rgba(170,150,255,.5),transparent),radial-gradient(1.5px 1.5px at 55% 25%,rgba(150,170,255,.4),transparent)}
@@ -28,18 +28,22 @@ h1{font-family:'EB Garamond',serif;font-size:clamp(2.4rem,6vw,3.8rem);font-weigh
 .chapter{display:flex;align-items:center;gap:16px;padding:14px 18px;border-radius:10px;border:1px solid transparent;text-decoration:none;transition:all .2s;cursor:default}
 .chapter.available{border-color:var(--border);background:var(--surface);cursor:pointer}
 .chapter.available:hover{border-color:var(--accent);background:var(--surface2);transform:translateX(4px)}
+.chapter.writing{border-color:var(--border);background:var(--surface);cursor:pointer}
+.chapter.writing:hover{border-color:var(--amber);background:var(--surface2);transform:translateX(4px)}
 .chapter.planned{opacity:.35}
 .chapter-num{font-size:12px;color:var(--muted);font-weight:500;min-width:28px;letter-spacing:.05em}
 .chapter-title{font-family:'EB Garamond',serif;font-size:1.05rem;color:var(--text);flex:1}
-.chapter.available .chapter-title{color:#e8e4ff}
-.chapter-badge{font-size:10px;padding:3px 10px;border-radius:20px;font-weight:500;letter-spacing:.05em}
+.chapter.available .chapter-title,.chapter.writing .chapter-title{color:#e8e4ff}
+.chapter-badge{font-size:10px;padding:3px 10px;border-radius:20px;font-weight:500;letter-spacing:.05em;white-space:nowrap}
 .badge-ready{background:#1a1635;color:var(--accent-light);border:1px solid var(--accent)}
+.badge-writing{background:#211c0f;color:var(--amber-light);border:1px solid var(--amber)}
 .badge-soon{background:transparent;color:var(--dim);border:1px solid var(--dim)}
 .arrow{color:var(--dim);font-size:14px;transition:color .2s;margin-left:4px}
-.chapter.available:hover .arrow{color:var(--accent-light)}
+.chapter.available:hover .arrow,.chapter.writing:hover .arrow{color:var(--accent-light)}
 .tool-btn{display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:500;text-decoration:none;border:1px solid var(--border);color:var(--muted);background:var(--surface);transition:all .2s}
 .tool-btn:hover{border-color:var(--accent);color:var(--accent-light);background:var(--surface2)}
 .tool-btn svg{width:14px;height:14px;stroke:currentColor;fill:none}
+.loading-hint{color:var(--dim);font-family:'EB Garamond',serif;font-style:italic;text-align:center;padding:30px 0}
 footer{text-align:center;margin-top:64px;font-size:12px;color:var(--dim);font-family:'EB Garamond',serif;font-style:italic}
 </style>
 </head>
@@ -67,97 +71,72 @@ footer{text-align:center;margin-top:64px;font-size:12px;color:var(--dim);font-fa
   <div class="divider"></div>
   <p class="section-label">Kapitel</p>
   <div class="chapter-list" id="chapterList">
-    <a class="chapter available" href="kapitel/kapitel1.html">
-      <span class="chapter-num">01</span>
-      <span class="chapter-title">Ist der Streit ein Unfall?</span>
-      <span class="chapter-badge badge-ready">Verfügbar</span>
-      <span class="arrow">→</span>
-    </a>
-    <a class="chapter available" href="kapitel/kapitel2.html">
-      <span class="chapter-num">02</span>
-      <span class="chapter-title">Was, ein Krankenhaus?</span>
-      <span class="chapter-badge badge-ready">Verfügbar</span>
-      <span class="arrow">→</span>
-    </a>
-    <a class="chapter available" href="kapitel/kapitel3.html">
-      <span class="chapter-num">03</span>
-      <span class="chapter-title">Handelsanalyse und Pferdekutschen?</span>
-      <span class="chapter-badge badge-ready">Verfügbar</span>
-      <span class="arrow">→</span>
-    </a>
-    <a class="chapter available" href="kapitel/kapitel4.html">
-      <span class="chapter-num">04</span>
-      <span class="chapter-title">Manatransfer und Dämonenfüchse?</span>
-      <span class="chapter-badge badge-ready">Verfügbar</span>
-      <span class="arrow">→</span>
-    </a>
-    <div class="chapter planned">
-      <span class="chapter-num">05</span>
-      <span class="chapter-title">Erster Durchgang — Steinzeitwelt</span>
-      <span class="chapter-badge badge-soon">Bald</span>
-    </div>
-    <div class="chapter planned">
-      <span class="chapter-num">06</span>
-      <span class="chapter-title">Erster Durchgang — One-Punch-Man-Welt</span>
-      <span class="chapter-badge badge-soon">Bald</span>
-    </div>
-    <div class="chapter planned">
-      <span class="chapter-num">07</span>
-      <span class="chapter-title">Erster Durchgang — Senko-san-Welt</span>
-      <span class="chapter-badge badge-soon">Bald</span>
-    </div>
-    <div class="chapter planned">
-      <span class="chapter-num">08</span>
-      <span class="chapter-title">Erster Durchgang — Cyberpunk-Welt</span>
-      <span class="chapter-badge badge-soon">Bald</span>
-    </div>
-    <div class="chapter planned">
-      <span class="chapter-num">09</span>
-      <span class="chapter-title">Erster Durchgang — Star-Trek-Welt</span>
-      <span class="chapter-badge badge-soon">Bald</span>
-    </div>
-    <div class="chapter planned">
-      <span class="chapter-num">10</span>
-      <span class="chapter-title">Die rote Figur — Zweiter Durchgang</span>
-      <span class="chapter-badge badge-soon">Bald</span>
-    </div>
-    <div class="chapter planned">
-      <span class="chapter-num">11</span>
-      <span class="chapter-title">Zweiter Durchgang — Spice-and-Wolf &amp; Magie</span>
-      <span class="chapter-badge badge-soon">Bald</span>
-    </div>
-    <div class="chapter planned">
-      <span class="chapter-num">12</span>
-      <span class="chapter-title">Zweiter Durchgang — Steinzeit &amp; One-Punch-Man</span>
-      <span class="chapter-badge badge-soon">Bald</span>
-    </div>
-    <div class="chapter planned">
-      <span class="chapter-num">13</span>
-      <span class="chapter-title">Zweiter Durchgang — Senko-san &amp; Cyberpunk</span>
-      <span class="chapter-badge badge-soon">Bald</span>
-    </div>
-    <div class="chapter planned">
-      <span class="chapter-num">14</span>
-      <span class="chapter-title">Zweiter Durchgang — Star Trek</span>
-      <span class="chapter-badge badge-soon">Bald</span>
-    </div>
-    <div class="chapter planned">
-      <span class="chapter-num">15</span>
-      <span class="chapter-title">Der Ordner</span>
-      <span class="chapter-badge badge-soon">Bald</span>
-    </div>
-    <div class="chapter planned">
-      <span class="chapter-num">16</span>
-      <span class="chapter-title">Die Lichtung</span>
-      <span class="chapter-badge badge-soon">Bald</span>
-    </div>
-    <div class="chapter planned">
-      <span class="chapter-num">17</span>
-      <span class="chapter-title">Kollaps</span>
-      <span class="chapter-badge badge-soon">Bald</span>
-    </div>
+    <p class="loading-hint">Kapitel werden geprüft …</p>
   </div>
   <footer>Nur für Testleser — bitte nicht weitergeben</footer>
 </main>
+
+<script>
+const TOTAL = 17;
+const FALLBACK_TITLES = [
+  "Ist der Streit ein Unfall?","Was, ein Krankenhaus?","Handelsanalyse und Pferdekutschen?",
+  "Manatransfer und Dämonenfüchse?","Erster Durchgang — Steinzeitwelt",
+  "Erster Durchgang — One-Punch-Man-Welt","Erster Durchgang — Senko-san-Welt",
+  "Erster Durchgang — Cyberpunk-Welt","Erster Durchgang — Star-Trek-Welt",
+  "Die rote Figur — Zweiter Durchgang beginnt","Zweiter Durchgang — Spice-and-Wolf & Magiewelt",
+  "Zweiter Durchgang — Steinzeitwelt & One-Punch-Man","Zweiter Durchgang — Senko-san & Cyberpunk",
+  "Zweiter Durchgang — Star Trek","Der Ordner","Die Lichtung","Kollaps"
+];
+
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+async function checkChapter(num) {
+  const path = `kapitel/kapitel${num}.html`;
+  try {
+    const res = await fetch(path, { cache: 'no-store' });
+    if (!res.ok) return { num, state: 'planned', title: FALLBACK_TITLES[num-1] || `Kapitel ${num}` };
+    const text = await res.text();
+    const doc = new DOMParser().parseFromString(text, 'text/html');
+    const h1 = doc.querySelector('h1');
+    const title = (h1 && h1.textContent.trim()) || FALLBACK_TITLES[num-1] || `Kapitel ${num}`;
+    const bodyText = doc.querySelector('.chapter-body');
+    const isWriting = bodyText && bodyText.textContent.includes('wird gerade geschrieben');
+    return { num, state: isWriting ? 'writing' : 'available', title, path };
+  } catch(e) {
+    return { num, state: 'planned', title: FALLBACK_TITLES[num-1] || `Kapitel ${num}` };
+  }
+}
+
+async function buildList() {
+  const checks = await Promise.all(Array.from({length: TOTAL}, (_, i) => checkChapter(i+1)));
+  const list = document.getElementById('chapterList');
+  list.innerHTML = checks.map(c => {
+    const numStr = String(c.num).padStart(2,'0');
+    if (c.state === 'available') {
+      return `<a class="chapter available" href="${c.path}">
+        <span class="chapter-num">${numStr}</span>
+        <span class="chapter-title">${esc(c.title)}</span>
+        <span class="chapter-badge badge-ready">Verfügbar</span>
+        <span class="arrow">→</span>
+      </a>`;
+    } else if (c.state === 'writing') {
+      return `<a class="chapter writing" href="${c.path}">
+        <span class="chapter-num">${numStr}</span>
+        <span class="chapter-title">${esc(c.title)}</span>
+        <span class="chapter-badge badge-writing">In Arbeit</span>
+        <span class="arrow">→</span>
+      </a>`;
+    } else {
+      return `<div class="chapter planned">
+        <span class="chapter-num">${numStr}</span>
+        <span class="chapter-title">${esc(c.title)}</span>
+        <span class="chapter-badge badge-soon">Bald</span>
+      </div>`;
+    }
+  }).join('');
+}
+
+buildList();
+</script>
 </body>
 </html>
