@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geschichten verwalten</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#07080f;--surface:#0f1020;--surface2:#161828;--border:#1e2140;--accent:#6c5ce7;--accent-light:#a29bfe;--text:#ddd8f0;--muted:#7a76a0;--dim:#3a3660}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+nav{background:rgba(15,16,32,.95);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:12px}
+.nav-back{font-size:13px;color:var(--muted);text-decoration:none;transition:color .2s}
+.nav-back:hover{color:var(--accent-light)}
+.nav-title{font-size:13px;color:var(--dim);flex:1;text-align:center;font-family:'EB Garamond',serif;font-style:italic}
+main{max-width:640px;margin:0 auto;padding:48px 24px 80px}
+h1{font-family:'EB Garamond',serif;font-size:2rem;font-weight:400;color:#f0eeff;margin-bottom:8px}
+.subtitle{font-size:14px;color:var(--muted);margin-bottom:40px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px;margin-bottom:24px}
+.card h2{font-size:15px;color:var(--accent-light);margin-bottom:20px;font-weight:500}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:6px}
+.field input{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border-color .2s}
+.field input:focus{border-color:var(--accent)}
+.field .hint{font-size:11px;color:var(--dim);margin-top:6px;line-height:1.5}
+.btn{padding:10px 22px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;border:none;font-family:'Inter',sans-serif}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#7d6ef5}
+.btn-secondary{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent-light)}
+.story-row{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px}
+.story-row-info{flex:1}
+.story-row-title{font-family:'EB Garamond',serif;font-size:1.05rem;color:#e8e4ff}
+.story-row-slug{font-size:11px;color:var(--dim);font-family:monospace}
+.remove-btn{background:transparent;border:none;color:var(--dim);font-size:1.1rem;cursor:pointer;padding:4px 8px;transition:color .2s}
+.remove-btn:hover{color:#c84040}
+.steps{background:var(--surface2);border-radius:10px;padding:16px 20px;margin-top:20px;font-size:13px;color:var(--muted);line-height:1.7}
+.steps strong{color:var(--text)}
+.steps ol{margin-left:18px;margin-top:8px}
+.empty-hint{color:var(--dim);font-style:italic;font-size:13px;text-align:center;padding:20px 0}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-back" href="index.html">← Alle Geschichten</a>
+  <span class="nav-title">Geschichten verwalten</span>
+</nav>
+<main>
+  <h1>Geschichten verwalten</h1>
+  <p class="subtitle">Neue Geschichte anlegen oder bestehende entfernen.</p>
+
+  <div class="card">
+    <h2>Neue Geschichte anlegen</h2>
+    <div class="field">
+      <label>Titel der Geschichte</label>
+      <input type="text" id="newTitle" placeholder="z.B. Das schnelle Dreamteam">
+    </div>
+    <div class="field">
+      <label>Ordnername (nur Kleinbuchstaben, keine Leerzeichen)</label>
+      <input type="text" id="newSlug" placeholder="z.B. dreamteam" oninput="sanitizeSlug(this)">
+      <p class="hint">Das ist der Ordner, in den du die Dateien später hochladen wirst.</p>
+    </div>
+    <div class="field">
+      <label>Kurzbeschreibung (optional)</label>
+      <input type="text" id="newTagline" placeholder="z.B. Eine Flash & Miraculous Fanfiction">
+    </div>
+    <div class="field">
+      <label>Geplante Gesamtkapitel (optional, für Fortschrittsanzeige)</label>
+      <input type="number" id="newTotal" placeholder="z.B. 12">
+    </div>
+    <button class="btn btn-primary" onclick="addStory()">+ Geschichte anlegen</button>
+  </div>
+
+  <div class="card">
+    <h2>Bestehende Geschichten</h2>
+    <div id="storyList"></div>
+  </div>
+
+  <div class="card">
+    <h2>Downloads</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Nach jeder Änderung beide Dateien neu herunterladen und hochladen.</p>
+    <button class="btn btn-secondary" onclick="downloadRootIndex()" style="margin-right:10px">↓ index.html (Hauptseite)</button>
+    <button class="btn btn-primary" onclick="downloadStoryIndex()">↓ index.html (neue Geschichte)</button>
+    <div class="steps">
+      <strong>So gehst du vor, wenn du eine neue Geschichte anlegst:</strong>
+      <ol>
+        <li>Titel, Ordnername und Beschreibung oben eintragen → „Geschichte anlegen"</li>
+        <li><strong>index.html (Hauptseite)</strong> herunterladen → im Root-Ordner deines Repos hochladen (überschreibt die bisherige Hauptseite)</li>
+        <li>Im Repository einen neuen Ordner mit exakt dem Slug-Namen anlegen (z.B. <code>dreamteam/</code>) und darin einen Unterordner <code>kapitel/</code></li>
+        <li><strong>index.html (neue Geschichte)</strong> herunterladen → in den neuen Ordner hochladen</li>
+        <li>Im zentralen <strong>Editor</strong> die neue Geschichte aus dem Dropdown auswählen und Kapitel schreiben wie gewohnt</li>
+      </ol>
+    </div>
+  </div>
+</main>
+
+<script>
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function getStories() {
+  try {
+    const s = JSON.parse(localStorage.getItem('cass_stories'));
+    if (s && s.length) return s;
+  } catch(e) {}
+  return [{ slug: 'cassandra', title: 'Cassandra', tagline: 'Welten mit Fehlern und Folgen', totalChapters: 17 }];
+}
+
+function saveStories(stories) {
+  localStorage.setItem('cass_stories', JSON.stringify(stories));
+}
+
+function sanitizeSlug(input) {
+  input.value = input.value.toLowerCase().replace(/[^a-z0-9-]/g, '');
+}
+
+function addStory() {
+  const title = document.getElementById('newTitle').value.trim();
+  const slug = document.getElementById('newSlug').value.trim();
+  const tagline = document.getElementById('newTagline').value.trim();
+  const total = parseInt(document.getElementById('newTotal').value) || 0;
+
+  if (!title || !slug) { alert('Bitte Titel und Ordnername angeben.'); return; }
+
+  const stories = getStories();
+  if (stories.find(s => s.slug === slug)) { alert('Dieser Ordnername wird bereits verwendet.'); return; }
+
+  stories.push({ slug, title, tagline, totalChapters: total });
+  saveStories(stories);
+
+  document.getElementById('newTitle').value = '';
+  document.getElementById('newSlug').value = '';
+  document.getElementById('newTagline').value = '';
+  document.getElementById('newTotal').value = '';
+
+  renderStoryList();
+  alert('Geschichte angelegt! Jetzt unten beide Dateien herunterladen und hochladen.');
+}
+
+function removeStory(slug) {
+  if (slug === 'cassandra') { alert('Cassandra kann nicht entfernt werden.'); return; }
+  if (!confirm('Geschichte aus der Liste entfernen? (Die Dateien im Repository bleiben erhalten, nur der Eintrag auf der Hauptseite verschwindet)')) return;
+  const stories = getStories().filter(s => s.slug !== slug);
+  saveStories(stories);
+  renderStoryList();
+}
+
+function renderStoryList() {
+  const stories = getStories();
+  const list = document.getElementById('storyList');
+  if (!stories.length) {
+    list.innerHTML = '<p class="empty-hint">Noch keine Geschichten.</p>';
+    return;
+  }
+  list.innerHTML = stories.map(s => `
+    <div class="story-row">
+      <div class="story-row-info">
+        <div class="story-row-title">${esc(s.title)}</div>
+        <div class="story-row-slug">/${esc(s.slug)}/</div>
+      </div>
+      <button class="remove-btn" onclick="removeStory('${s.slug}')" title="Entfernen">✕</button>
+    </div>
+  `).join('');
+}
+
+function downloadRootIndex() {
+  const stories = getStories();
+  const cards = stories.map(s => `
+    <a class="story-card" href="${esc(s.slug)}/index.html">
+      <div class="story-info">
+        <div class="story-title">${esc(s.title)}</div>
+        <div class="story-tagline">${esc(s.tagline || '')}</div>
+      </div>
+      <span class="story-arrow">→</span>
+    </a>`).join('\n');
+
+  const html = `<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geschichten — Sebastian Beller</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#07080f;--surface:#0f1020;--surface2:#161828;--border:#1e2140;--accent:#6c5ce7;--accent-light:#a29bfe;--text:#ddd8f0;--muted:#7a76a0;--dim:#3a3660}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
+.stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+.stars::before,.stars::after{content:'';position:absolute;inset:0;background-image:radial-gradient(1px 1px at 20% 30%,rgba(255,255,255,.6),transparent),radial-gradient(1px 1px at 80% 10%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 50% 70%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 10% 60%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 90% 85%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 35% 15%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 65% 45%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 75% 55%,rgba(255,255,255,.6),transparent),radial-gradient(1.5px 1.5px at 25% 75%,rgba(170,150,255,.5),transparent),radial-gradient(1.5px 1.5px at 55% 25%,rgba(150,170,255,.4),transparent)}
+.stars::after{background-image:radial-gradient(1px 1px at 15% 20%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 85% 40%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 40% 80%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 70% 65%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 60% 5%,rgba(255,255,255,.5),transparent)}
+topnav{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;justify-content:flex-end;gap:8px;padding:12px 20px;background:rgba(7,8,15,.7);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+main{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:100px 24px 80px}
+header{text-align:center;margin-bottom:64px}
+h1{font-family:'EB Garamond',serif;font-size:clamp(2.4rem,6vw,3.6rem);font-weight:400;line-height:1.1;color:#f0eeff;margin-bottom:16px}
+.author{font-family:'EB Garamond',serif;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-light);margin-bottom:16px}
+.tagline{font-family:'EB Garamond',serif;font-size:1.05rem;color:var(--muted);font-style:italic}
+.divider{width:60px;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin:40px auto}
+.story-grid{display:flex;flex-direction:column;gap:14px}
+.story-card{display:flex;align-items:center;gap:20px;padding:24px 26px;border-radius:14px;border:1px solid var(--border);background:var(--surface);text-decoration:none;transition:all .2s}
+.story-card:hover{border-color:var(--accent);background:var(--surface2);transform:translateX(4px)}
+.story-info{flex:1}
+.story-title{font-family:'EB Garamond',serif;font-size:1.4rem;color:#f0eeff;margin-bottom:6px}
+.story-tagline{font-family:'EB Garamond',serif;font-size:.95rem;color:var(--muted);font-style:italic;line-height:1.5}
+.story-arrow{color:var(--dim);font-size:18px;transition:color .2s}
+.story-card:hover .story-arrow{color:var(--accent-light)}
+.tool-btn{display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:500;text-decoration:none;border:1px solid var(--border);color:var(--muted);background:var(--surface);transition:all .2s}
+.tool-btn:hover{border-color:var(--accent);color:var(--accent-light);background:var(--surface2)}
+.tool-btn svg{width:14px;height:14px;stroke:currentColor;fill:none}
+footer{text-align:center;margin-top:64px;font-size:12px;color:var(--dim);font-family:'EB Garamond',serif;font-style:italic}
+</style>
+</head>
+<body>
+<topnav>
+  <a href="manage.html" class="tool-btn">
+    <svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+    Neue Geschichte
+  </a>
+</topnav>
+<div class="stars"></div>
+<main>
+  <header>
+    <p class="author">Sebastian Beller</p>
+    <h1>Geschichten</h1>
+    <p class="tagline">Eine Sammlung erzählter Welten</p>
+  </header>
+  <div class="divider"></div>
+  <div class="story-grid">
+${cards}
+  </div>
+  <footer>Nur für Testleser — bitte nicht weitergeben</footer>
+</main>
+</body>
+</html>`;
+
+  download('index.html', html);
+}
+
+function downloadStoryIndex() {
+  const stories = getStories();
+  if (!stories.length) { alert('Noch keine Geschichte angelegt.'); return; }
+  const latest = stories[stories.length - 1];
+
+  const html = `<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${esc(latest.title)}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#07080f;--surface:#0f1020;--surface2:#161828;--border:#1e2140;--accent:#6c5ce7;--accent-light:#a29bfe;--text:#ddd8f0;--muted:#7a76a0;--dim:#3a3660}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
+.stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+.stars::before,.stars::after{content:'';position:absolute;inset:0;background-image:radial-gradient(1px 1px at 20% 30%,rgba(255,255,255,.6),transparent),radial-gradient(1px 1px at 80% 10%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 50% 70%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 10% 60%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 90% 85%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 35% 15%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 65% 45%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 75% 55%,rgba(255,255,255,.6),transparent),radial-gradient(1.5px 1.5px at 25% 75%,rgba(170,150,255,.5),transparent),radial-gradient(1.5px 1.5px at 55% 25%,rgba(150,170,255,.4),transparent)}
+.stars::after{background-image:radial-gradient(1px 1px at 15% 20%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 85% 40%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 40% 80%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 70% 65%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 60% 5%,rgba(255,255,255,.5),transparent)}
+topnav{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;justify-content:space-between;gap:8px;padding:12px 20px;background:rgba(7,8,15,.7);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+.nav-back{font-family:'Inter',sans-serif;font-size:13px;color:var(--muted);text-decoration:none;display:flex;align-items:center;transition:color .2s}
+.nav-back:hover{color:var(--accent-light)}
+.nav-right{display:flex;gap:8px}
+main{position:relative;z-index:1;max-width:720px;margin:0 auto;padding:100px 24px 80px}
+header{text-align:center;margin-bottom:64px}
+h1{font-family:'EB Garamond',serif;font-size:clamp(2.4rem,6vw,3.8rem);font-weight:400;line-height:1.1;color:#f0eeff;margin-bottom:16px}
+.tagline{font-family:'EB Garamond',serif;font-size:1.1rem;color:var(--muted);font-style:italic}
+.author{font-family:'EB Garamond',serif;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-light);margin-bottom:16px}
+.divider{width:60px;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin:40px auto}
+.section-label{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--dim);margin-bottom:20px;font-weight:500}
+.chapter-list{display:flex;flex-direction:column;gap:4px}
+.chapter.planned{opacity:.35;display:flex;align-items:center;gap:16px;padding:14px 18px;border-radius:10px}
+.chapter-num{font-size:12px;color:var(--muted);font-weight:500;min-width:28px;letter-spacing:.05em}
+.chapter-title{font-family:'EB Garamond',serif;font-size:1.05rem;color:var(--text);flex:1}
+.chapter-badge{font-size:10px;padding:3px 10px;border-radius:20px;font-weight:500;letter-spacing:.05em}
+.badge-soon{background:transparent;color:var(--dim);border:1px solid var(--dim)}
+.tool-btn{display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:500;text-decoration:none;border:1px solid var(--border);color:var(--muted);background:var(--surface);transition:all .2s}
+.tool-btn:hover{border-color:var(--accent);color:var(--accent-light);background:var(--surface2)}
+.tool-btn svg{width:14px;height:14px;stroke:currentColor;fill:none}
+.empty-note{text-align:center;color:var(--dim);font-style:italic;padding:40px 0;font-size:1rem}
+footer{text-align:center;margin-top:64px;font-size:12px;color:var(--dim);font-family:'EB Garamond',serif;font-style:italic}
+</style>
+</head>
+<body>
+<topnav>
+  <a href="../index.html" class="nav-back">← Alle Geschichten</a>
+  <div class="nav-right">
+    <a href="../editor.html" class="tool-btn">
+      <svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/></svg>
+      Editor
+    </a>
+  </div>
+</topnav>
+<div class="stars"></div>
+<main>
+  <header>
+    <p class="author">Sebastian Beller</p>
+    <h1>${esc(latest.title)}</h1>
+    <p class="tagline">${esc(latest.tagline || '')}</p>
+  </header>
+  <div class="divider"></div>
+  <p class="section-label">Kapitel</p>
+  <p class="empty-note">Noch keine Kapitel veröffentlicht. Im Editor unter „${esc(latest.title)}" das erste Kapitel schreiben — die Liste aktualisiert sich dann automatisch im Index-Tab.</p>
+  <footer>Nur für Testleser — bitte nicht weitergeben</footer>
+</main>
+</body>
+</html>`;
+
+  download(`index_${latest.slug}.html`, html);
+}
+
+function download(filename, content) {
+  const blob = new Blob([content], {type:'text/html;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+}
+
+document.addEventListener('DOMContentLoaded', renderStoryList);
+</script>
+</body>
+</html>

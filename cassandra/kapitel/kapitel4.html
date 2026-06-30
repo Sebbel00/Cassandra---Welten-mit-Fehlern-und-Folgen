@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kapitel 4 — Manatransfer und Dämonenfüchse? | Cassandra</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#07080f;--surface:#0f1020;--surface2:#161828;--border:#1e2140;--accent:#6c5ce7;--accent-light:#a29bfe;--text:#ddd8f0;--muted:#7a76a0;--dim:#3a3660}
+body{background:var(--bg);color:var(--text);font-family:'EB Garamond',serif;min-height:100vh;overflow-x:hidden;line-height:1.85;font-size:1.125rem}
+.stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+.stars::before,.stars::after{content:'';position:absolute;inset:0;background-image:radial-gradient(1px 1px at 20% 30%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 80% 10%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 50% 70%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 10% 60%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 90% 85%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 35% 15%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 65% 45%,rgba(255,255,255,.3),transparent),radial-gradient(1.5px 1.5px at 25% 75%,rgba(170,150,255,.4),transparent),radial-gradient(1.5px 1.5px at 55% 25%,rgba(150,170,255,.4),transparent)}
+.stars::after{background-image:radial-gradient(1px 1px at 15% 20%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 85% 40%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 40% 80%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 70% 65%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 60% 5%,rgba(255,255,255,.4),transparent)}
+nav{position:sticky;top:0;z-index:10;background:rgba(7,8,15,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;gap:16px}
+.nav-back{font-family:'Inter',sans-serif;font-size:13px;color:var(--muted);text-decoration:none;transition:color .2s}
+.nav-back:hover{color:var(--accent-light)}
+.nav-title{font-family:'Inter',sans-serif;font-size:13px;color:var(--dim);flex:1;text-align:center}
+.nav-chapters{display:flex;gap:8px}
+.nav-link{font-family:'Inter',sans-serif;font-size:12px;color:var(--muted);text-decoration:none;padding:5px 12px;border:1px solid var(--border);border-radius:20px;transition:all .2s}
+.nav-link:hover{border-color:var(--accent);color:var(--accent-light)}
+.nav-link.disabled{opacity:.3;pointer-events:none}
+main{position:relative;z-index:1;max-width:680px;margin:0 auto;padding:64px 24px 100px}
+.chapter-label{font-family:'Inter',sans-serif;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-light);margin-bottom:20px;display:block}
+h1{font-family:'EB Garamond',serif;font-size:clamp(1.8rem,5vw,2.8rem);font-weight:400;line-height:1.2;color:#f0eeff;margin-bottom:48px}
+.chapter-body p{margin-bottom:1.5em;color:var(--text)}
+.chapter-body em{color:#c8bfff;font-style:italic}
+.chapter-body strong{color:#e8e4ff;font-weight:500}
+.chapter-footer{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-family:'Inter',sans-serif}
+.footer-nav{display:flex;gap:12px}
+.footer-btn{font-size:13px;color:var(--muted);text-decoration:none;padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:var(--surface);transition:all .2s}
+.footer-btn:hover{border-color:var(--accent);color:var(--accent-light);background:var(--surface2)}
+.footer-btn.disabled{opacity:.3;pointer-events:none}
+.chapter-num-display{font-size:12px;color:var(--dim)}
+</style>
+</head>
+<body>
+<div class="stars"></div>
+<nav>
+  <a class="nav-back" href="../index.html">← Übersicht</a>
+  <span class="nav-title">Cassandra</span>
+  <div class="nav-chapters">
+    <a class="nav-link" href="kapitel3.html">← Kap. 3</a>
+    <a class="nav-link" href="kapitel5.html">Kap. 5 →</a>
+  </div>
+</nav>
+<main>
+  <span class="chapter-label">Kapitel 4 von 17</span>
+  <h1>Manatransfer und Dämonenfüchse?</h1>
+  <div class="chapter-body">
+    <p>Gute Neuigkeiten: Sebastian hat gut geschlafen. Schlechte Neuigkeiten: nicht so, wie er es sich <strong>wünscht</strong>.</p>
+    <p>Er liegt in einem anderen Raum als gestern. Einem größeren Raum. Und viel unordentlicher.</p>
+    <p>Auf dem Schreibtisch stapeln sich Pergamente. Alle mit Diagrammen. Diagramme, die man als Zeichnungen beschreiben würde, wenn man höflich ist. Und als chaotische Versuche von irgendwas, wenn man ehrlich ist. An den Wänden hängen Tafeln mit Formeln, manche durchgestrichen, manche dreifach unterstrichen, eine mit einem großen Fragezeichen, das so wild eingezeichnet wurde, dass die Kreide dabei offensichtlich zerbrochen ist. Neben dem Bett stehen zusätzlich auch zwei leere Krüge. Wofür die sind, das kann und will ich gar nicht wissen.</p>
+    <p>Auf dem Stuhl neben der Tür sitzt Schwefel und schaut ihn an. Ein Fuchs, oder zumindest die Entscheidung eines Fuchses. Fell, welches in jedem Licht zu dunkel scheint. Augen in einer Farbe, die sich aus Orange, Schwarz, Grün und Blau nicht einigen kann. Sein Schatten scheint bereits auf der anderen Seite des Zimmers zu sein, obwohl er sich nicht bewegt hat.</p>
+    <p>Sebastian schaut zum Stuhl rüber und ein müdes „Morgen" kommt von seinen Lippen.</p>
+    <p>Schwefel schaut ihn weiter an.</p>
+    <p>„Ja, ich weiß." Sebastian setzt sich auf und schaut auf seine Hände. An den Fingerspitzen der rechten Hand zuckt ein kleines blaues Leuchten. Flüchtig, ungebeten, und schon ist es wieder weg. Er schaut es an, wie man eine Mücke anschaut. Eine Mücke, die man gehört, aber nicht gesehen hat.</p>
+    <p>„Schon wieder zu viel", brummt Sebastian mürrisch.</p>
+    <p>Er steht auf, zieht sich an und macht die Tür auf. Schwefel drängelt sich, mal wieder, einfach vor.</p>
+    <p>Sebastian ist, wenn man es korrekt ausdrücken will, Professor. Oder Magister. Oder Forschungsleiter. Die Akademie, welche nach alten Büchern und Tinte riecht, nennt ihn offiziell Lehrbeauftragter für angewandte Manatheorie und Energietransfer, was so lang ist, dass seine Studierenden ihn einfach Batterie nennen und hoffen, dass er nicht nachfragt.</p>
+    <p>Er lehrt. Und er forscht. Beides gleichzeitig, was in der Praxis bedeutet, dass seine Studierenden lernen, indem sie ihm helfen. Und er forscht, indem er erklärt. Das sorgt dafür, dass beide Seiten hinterher nicht ganz sicher sind, wer von wem mehr lernt.</p>
+    <p>Das Thema seiner Forschung ist so simpel formuliert wie schwer umzusetzen: Mana einfangen. In einem Behälter. Der das Mana hält und es wieder abgibt, wenn man das will, und nicht, wenn es ihm selbst beliebt.</p>
+    <p>Das klingt bescheiden. Das ist es aber leider nicht.</p>
+    <p>Bisher existiert kein einziger Behälter. Nicht einer, der diesen Ansprüchen gerecht werden kann. Was es gibt, sind Theorien, Skizzen, drei versengte Tische und das kollektive, stille Übereinkommen sämtlicher Studierender, dass sie während Sebastians Demonstrationen lieber etwas weiter hinten sitzen, als er es gerne hätte.</p>
+    <p>„Also", sagt Sebastian und steht vor seinen Studierenden mit dem Enthusiasmus von jemandem, der dieses Thema liebt und das Schlaf-zu-Kaffee-Verhältnis des vergangenen Monats anscheinend noch nicht bereut.</p>
+    <p>„Wer kann mir erklären, warum der Behälter aus dem letzten Versuch nicht funktioniert hat?"</p>
+    <p>Stille. Noch nicht mal ein Räuspern oder eine Bewegung auf den Sitzbänken.</p>
+    <p>„Elara? Vielleicht irgendeine Idee?"</p>
+    <p>Ein Mädchen vorne rechts schaut erstmal nach unten. Sie hat einen kurzen Zopf, eine Brille mit runden Brillengläsern, Finger voller Tintenflecken, neben sich einen Stapel Bücher, der eigentlich zu groß für ihren Platz ist. Nach einer langen Stille schaut sie kurz auf ihre Notizen, obwohl sie die Antwort längst hat.</p>
+    <p>„Weil die Leitstruktur innen keine Fließrichtung hat? Das Mana kommt rein und weiß dann nicht wohin?"</p>
+    <p>„Genau. Es kommt rein, dreht sich einmal im Kreis und explodiert dann."</p>
+    <p>Sebastian tippt auf die Skizze an der Tafel. „Was wir brauchen, ist eine —" erstmal Stille, danach ein — „hmmmm, vielleicht eine gerichtete Struktur? Also innen. Eine Struktur, die das Mana führt, speichert und bei Bedarf wieder rausgibt. Wie eine. Ähnlich wie eine. Wie eine."</p>
+    <p>Er hört auf, laut zu denken, da er einfach nicht auf den Gegenstand kommt, den er meint.</p>
+    <p>Sebastian schaut auf seine Hände. Das blaue Leuchten ist wieder da. Diesmal an beiden Händen gleichzeitig. Ein kleines Zucken, das entscheidet, jetzt einfach da zu sein.</p>
+    <p>„Sebastian?" Tobias, aus der zweiten Reihe, breitschultrig, hat bereits den zweiten Stift verloren und sucht ihn unter seinem Tisch. „Ihre Hände." Eine unheimliche Pause erfüllt den Raum. „Sie leuchten wieder."</p>
+    <p>„Ich weiß." Ein kurzer, kontrollierter Impuls. Einfach eine kleine blaue Entladung in Richtung des Metallstabs am Ende des Tisches. Der Stab klingelt leise, und die blaue Magie wandert um diesen Stab. Die Studierenden rücken trotzdem zurück. Alle. Alle, außer Moritz. Moritz, der in der letzten Reihe sitzt. Er sitzt da wie jemand, der vergessen hat, dass er auch einen Stuhl hat. Diesen Umstand versucht er mit seiner schieren Präsenz auszugleichen. Er hat Unterarme wie andere Leute Oberschenkel. Er schaut Sebastian an und wartet einen Moment. Er braucht diese Zeit, um überhaupt zu verstehen, was gerade eigentlich passiert. Doch dieser Verarbeitungsprozess wird von Sebastian durch eine Frage unterbrochen.</p>
+    <p>„Kennt ihr Wassermühlen?"</p>
+    <p>„Ja?" — alle sieben sagen das mit dem Ton von Menschen, die nicht wissen, wohin das führen soll, aber das Gefühl haben, dass es noch interessant werden könnte.</p>
+    <p>„Das Wasser kommt nicht einfach an und macht, was es will. Es wird geleitet. Durch eine bestimmte Struktur. Und die Struktur entscheidet, was das Wasser antreiben soll."</p>
+    <p>Sebastian zeichnet auf die Tafel. Ähnliche Skizzen wie wir in seinem Zimmer gesehen haben. Irgendwelche Diagramme, Schichten und auch noch Fließrichtungen. „So stelle ich mir das vor. Nicht ein Behälter, der das Mana einsperrt. Ein Behälter, der es ordnet."</p>
+    <p>Die Studierenden schreiben mit. Elara nickt langsam und ist schon längst am Schreiben, bevor Sebastian den Satz überhaupt beenden kann. Tobias hat den zweiten Stift gefunden und verliert ihn in diesem Moment ein drittes Mal.</p>
+    <p>Der Gong beendet den Gedanken und das hektische Stiftsuchen von Tobias, doch dann kommt Moritz mit einer Frage. Moritz stellt immer drei Sekunden nach dem Ende der Stunde Fragen — Fragen, welche allein schon eine ganze Unterrichtsstunde füllen könnten. Er meint es nicht böswillig. Er ist nur sehr, sehr gründlich und deswegen immer mit dem Dokumentieren der Unterrichtsinhalte beschäftigt.</p>
+    <p>„Welches Material nutzen wir, wenn wir die Leitstruktur innen aufbauen? Alles, was ich kenne, verformt sich bei zu viel Manastrom."</p>
+    <p>„Gute Frage." Sebastian dreht sich zur Tafel. „Wir brauchen etwas, das leitfähig ist, aber hitzebeständig. Etwas, das den Strom führt, ohne selbst verändert zu werden. Ideale Kombination wäre…" Er schreibt etwas an die Tafel. Auf einmal hört er auf zu schreiben. Er schaut ganz verwirrt das an, was er eben geschrieben hat.</p>
+    <p>Silizium-Kupfer-Schichten.</p>
+    <p>Er schaut es an. Eine Sekunde. Fast sogar eine Minute.</p>
+    <p>Dann schüttelt er den Kopf, sehr leicht und mindestens genauso frustriert wie fragend, und radiert die Worte weg.</p>
+    <p>„Darüber müssen wir nochmal nachdenken", sagt er. „Für heute sind wir aber genug an dieser Aufgabe verzweifelt."</p>
+    <p>Ich könnte ihm sagen, warum ihm diese Kombination so vertraut vorkommt. Aber das wäre jetzt wirklich zu einfach. Dann hätte Sebastian ja gar nichts mehr zu tun. Und das wollen wir doch nicht, oder?</p>
+    <p>Es ist kurz nach der Mittagspause, als Schwefel in den Unterrichtsraum spaziert.</p>
+    <p>Schwefel ist Sebastians Gefährte. Der Gefährte von heute Morgen. Beschworener Gefährte mit Seelenbund. Ein Dämonenfuchs. Durch und durch. Mit einem Fell, das in jedem Licht viel zu dunkel wirkt. Seine Augen … Moment, das habe ich euch doch schon mal erzählt. Kurzes Vorspulen … Wenn er sich bewegt, bewegt sich sein Schatten einen Moment zu früh. Wenn er still steht, ist schwer zu sagen, wie groß er eigentlich ist. Die Dunkelheit um ihn herum lässt keine klaren Grenzen zu. Manchmal scheint er raumfüllend. Manchmal scheint es, als ist er kaum da.</p>
+    <p>Für jeden, der Schwefel zum ersten Mal sieht, ist es eindeutig: Ihn als Gefährten zu haben, ist keine Entscheidung, die man trifft. Das ist eine Konsequenz. Wenn er den Raum betritt, ist das ein Gefühl von: Ich könnte ihm nicht einmal mit aller Kraft ein Haar krümmen.</p>
+    <p>Für Sebastian ist es eine Selbstverständlichkeit. „Ah, gut. Setz dich kurz, ich bin gleich fertig."</p>
+    <p>Elara, die gerade ihre Notizen sortiert, sieht Schwefel als Erste. Dann fängt sie sehr schnell an, aufzuschauen, einzuatmen und ihren Stuhl rückwärts zu schieben, bis der Stuhl gegen die Wand stößt.</p>
+    <p>Tobias sieht ihn als Zweiter. Tobias steht auf und stellt sich hinter seinen Stuhl. Weil ein Stuhl zwischen ihm und einem Dämonenfuchs objektiv betrachtet ein „Hindernis" darstellt, aber der Instinkt fragt bei solchen Sachen ja nicht.</p>
+    <p>Moritz sieht ihn als Letzter. Moritz schaut ihn an. Er lehnt sich leicht vor. Nickt Schwefel einmal zu. Mit einer Energie von jemandem, der eine neue Information einordnen muss und es für ausreichend erachtet.</p>
+    <p>Sebastian schaut von seiner Skizze hoch. Schaut zu Schwefel. Schaut zu seinen Studierenden. Schaut wieder zu Schwefel.</p>
+    <p>„Er beißt nicht", sagt Sebastian. Eine kurze Pause. „Zumindest nicht ohne Grund." Sebastian schaut etwas genauer seine Studierenden an. „Und wenn er etwas gegessen hat." Sebastian lacht dabei und streichelt Schwefel über den Kopf.</p>
+    <p>Es ist zu erkennen, dass das nicht die Aussage ist, die seine Studierenden beruhigen kann.</p>
+    <p>Schwefel legt sich unter Sebastians Schreibtisch. Oder zumindest so nah darunter, wie seine Schattengestalt es zulässt. Dann schaut Schwefel zu Elaras Notizen rüber.</p>
+    <p>„Er ist hier wegen des Manas", erklärt Sebastian. Er sagt es, um seine Studierenden zu beruhigen, merkt aber, dass das nicht den gewollten Effekt erzielt. „Zu viel Mana in einer Person ist gefährlich. Irgendwann entlädt es sich unkontrolliert. Schwefel verhindert das. Er reguliert." Er tippt kurz an seine Schläfe. „Stellt euch das wie ein Überdruckventil vor."</p>
+    <p>„Ein Überdruckventil", wiederholt Moritz ruhig.</p>
+    <p>„Genau."</p>
+    <p>„Das Überdruckventil schaut gerade sehr neugierig meine Notizen an."</p>
+    <p>„Solange er neugierig schaut, ist er harmlos."</p>
+    <p>Elara, die inzwischen zum Tisch zurückgekehrt ist, aber bereit war, diese Entscheidung schnell zu revidieren, hebt die Hand. „Wie oft reguliert er das Mana denn?"</p>
+    <p>„So oft wie nötig. Manchmal zweimal am Tag, manchmal einmal. Hängt davon ab, wie viel ich arbeite."</p>
+    <p>Das Fell von Schwefel schimmert kurz auf. Ein dunkles, bedrohliches Blau, dasselbe wie das Leuchten an Sebastians Händen, aber viel tiefer. Dunkler. Dann ist es wieder weg. Elara und Tobias tauschen einen Blick aus. Einen Blick, den man tauscht, wenn man sich kollektiv darauf einigt, etwas als normal zu akzeptieren, weil die Alternative wäre, darüber nachzudenken.</p>
+    <p>Die Nachmittagsstunde läuft gut, wenn man „gut" großzügig auslegen möchte.</p>
+    <p>Es gibt einen Moment, in dem Elaras Erdungsmagie beim falschen Testkristall anschlägt und dieser mit einem sehr befriedigenden Knall in zwei saubere Hälften zerbricht. Dann einen zweiten Moment, in dem Sebastian selbst, abgelenkt von einer Berechnung, seinen Manastrom kurz zu stark werden lässt. Dadurch entsteht ein Blitz, der quer durch den Raum zuckt und alle sieben Studierenden reflexartig unter ihre Tische treibt.</p>
+    <p>Schwefel hebt kurz den Kopf. Dann legt er ihn wieder hin. Er hat in dem Moment für sich selbst entschieden, dass das keine Gefahr für ihn darstellt.</p>
+    <p>„Das war ich", sagt Sebastian vollständig unnötigerweise. „Alles gut. Macht weiter."</p>
+    <p>Tobias schaut unter seinem Tisch hervor. „Wir machen weiter."</p>
+    <p>„Danke."</p>
+    <p>„Aber das war nicht mal ein halber Meter an mir vorbei."</p>
+    <p>„Weniger als das. Tut mir leid, ich war abgelenkt. Aber sieh es positiv: Es hätte auch nicht einen halben Meter entfernt sein können."</p>
+    <p>„Und das soll etwas Positives sein?"</p>
+    <p>Tobias kriecht hervor, setzt sich wieder auf seinen Stuhl und sieht aus wie jemand, der an mindestens fünf Dinge denkt, die er alle nicht sagen wird. Und dann sagt er doch auf einmal einen dieser Gedanken: „Hat das nicht gerade genau das Problem illustriert, das wir lösen wollen?"</p>
+    <p>Sebastian schaut ihn an.</p>
+    <p>„Das Mana baut sich auf. Sie können es nicht immer kontrollieren." Tobias deutet auf Schwefel. „Und er kann nicht immer da sein, um es aufzunehmen. Was wäre, wenn der Behälter, anstatt von Ihnen aktiv befüllt zu werden, einfach passiv das Mana abziehen würde? Sozusagen als zweiter Schwefel, nur in Kristallform?"</p>
+    <p>Da sind erstmal alle still. Keiner hat damit gerechnet.</p>
+    <p>Dann sagt Moritz, der die ganze Zeit ruhig in der letzten Reihe gesessen und zugehört hat, einen einzigen Satz: „Haben wir eigentlich schon mal versucht, es zusammen umzusetzen?"</p>
+    <p>Alle schauen ihn an.</p>
+    <p>„Jeder forscht immer allein. Elara mit ihrer Erdungsmagie, Sebastian mit dem Transfer, Tobias mit den Gehäusen." Er deutet abwechselnd auf alle drei. „Aber ein Behälter braucht ein Gehäuse, einen Leiter und eine Erde. Das sind drei Dinge. Wir sind mehr als drei Personen."</p>
+    <p>Wieder eine komische, kurze Stille. Wie könnte ich die denn besser füllen als mit einem unnützen Kommentar.</p>
+    <p>„Das", sagt Sebastian langsam, „ist eine sehr gute Beobachtung."</p>
+    <p>Moritz nickt einmal und wirkt dabei ganz stolz auf sich selbst. Als wäre es nicht offensichtlich gewesen, und er hätte jetzt etwas ganz Neues herausgefunden.</p>
+    <p>Manchmal ist die klügste Person im Raum diejenige, die einfach laut ausspricht, was alle gesehen und dennoch keiner gesagt hat.</p>
+    <p>Sie arbeiten bis zum frühen Abend weiter, nur diesmal mit neuem Einsatz und einer neuen Idee.</p>
+    <p>Tobias fertigt das Gehäuse aus Walnussholz, mit Alchemiesiegeln durchzogen, Schicht für Schicht imprägniert, bis das Material aufhört, wie Holz zu sein, und kurz davor ist, etwas anderes zu sein. Elara legt die Erdungsstruktur innen an, präzise, mit einer Runenfolge, die sie zweimal zeichnet, weil die erste ihr nicht sauber genug war. Sebastian entwirft den Transferkanal, die Mitte der ganzen Speicherapparatur. Er arbeitet den Pfad entlang, welchen das Mana entlangfließen soll. Natürlich geordnet und nicht eingesperrt und planlos.</p>
+    <p>Moritz hält die Bestandteile beim Zusammensetzen fest, weil seine Hände groß genug sind, alle drei Bestandteile gleichzeitig zu halten, und das auch ohne nur ein bisschen zu zittern. Das ist vielleicht kein magischer Beitrag, aber es ist trotzdem der Beitrag, der gerade fehlt. Man braucht nicht immer nur Köpfchen, manchmal reicht es, eine starke Hand zu kennen und nutzen zu können.</p>
+    <p>Der erste Behälter ist klein, wirkt unfertig, roh. Aber er explodiert nicht. Zumindest noch nicht.</p>
+    <p>„Versuchen wir es doch mal mit dem Manaabsorbieren." Sebastian flüstert leise: „Vielleicht explodierst du diesmal nicht. Langsam wird der Friseur wirklich teuer."</p>
+    <p>Er legt beide Hände an den Behälter. Konzentriert sich und schickt Mana durch den Transferkanal.</p>
+    <p>Das Holz leuchtet kurz, aber sehr hell auf. Die Runen springen an. Elaras Erdungsstruktur zieht das Mana an. Sebastian kann es, seinem Blick zu urteilen, spüren. Das Mana fließt. Es fließt wirklich in die richtige Richtung.</p>
+    <p>Und dann ist das Mana auf einmal weg.</p>
+    <p>Kein Knall. Kein Feuer. Das Mana läuft einfach durch den Behälter hindurch wie Wasser durch ein Sieb, versickert irgendwo in der Leitstruktur und ist nicht mehr da. Der Behälter ist kalt und leer. Als wäre nie etwas gewesen.</p>
+    <p>Stille, wie wir sie schon sehr oft hatten.</p>
+    <p>„Das Gehäuse hält nicht", sagt Tobias relativ enttäuscht, mit so einem kleinen Unterton, der genervt und frustriert zugleich wirkt.</p>
+    <p>„Die Runen haben funktioniert", sagt Elara. Sie klingt aber nicht enttäuscht. Sie klingt wie jemand, der bereits weiterdenkt. „Die Erdmagie war stabil. Das Problem liegt im Material des Kanals. Es leitet nicht richtig. Es führt das Mana nicht, sondern lässt es einfach durchfließen."</p>
+    <p>Sebastian schaut auf den Behälter und dann auf seine Hände.</p>
+    <p>Danach schweift sein Blick auf die Tafel, auf der er heute Morgen etwas hingeschrieben und wegradiert hat.</p>
+    <p>„Ich weiß", sagt er, sehr leise. „Ich glaube, ich weiß, was fehlt. Ich komme nur gerade nicht drauf."</p>
+    <p>Er versucht es trotzdem noch mal und hofft, dass mehr Mana diesmal helfen könnte. Mehr Druck durch den Kanal. Als ob die Menge das Material, dessen Funktion sie eigentlich ersetzen soll, ausgleichen könnte.</p>
+    <p>Schwefel steht auf.</p>
+    <p>Er tritt neben Sebastian und legt seinen Kopf gegen Sebastians Unterarm. Schwefel sein Zeichen. Das Zeichen, dass Sebastian vorsichtig sein sollte. Sebastian schüttelt kurz den Kopf. „Nicht jetzt."</p>
+    <p>Schwefel bleibt einfach sitzen.</p>
+    <p>Sebastian schickt mehr Mana. Und mehr. Und noch viel mehr. Der Behälter hält nicht, das Mana versickert. Es versickert einfach. Aber er hört nicht auf, weil die Lösung doch irgendwo sein muss, das Mana muss doch irgendwo in dem Gefäß gespeichert bleiben.</p>
+    <p>Auf einmal zieht Schwefel an Sebastians Ärmel.</p>
+    <p>Nicht grob. Nur so, wie er es immer macht. Er macht das, was er immer macht, weil das sein Auftrag ist. Und weil das Mana, das gerade aus Sebastian herausfließt, durch den Behälter durchfließt. Es kann einfach nicht gespeichert werden. Schwefel zieht immer kräftiger, fast schon nervös, an Sebastians Ärmel. Vielleicht zieht er so an dem Ärmel, weil er Angst um Sebastian hat, oder auch Angst, nicht mehr genug Mana speisen zu können. Wer weiß das bei Schwefel so genau. Natürlich, abgesehen von mir. Ich meine, ich weiß ja alles, was hier passiert.</p>
+    <p>Sebastian merkt es aber leider einen Moment zu spät.</p>
+    <p>„Scheiße, das war jetzt zu viel Ma…"</p>
+    <p>Er kippt.</p>
+    <p>Schwefel fängt Sebastian nicht auf. Schwefel ist ein Dämonenfuchs und kein Kopfkissen. Er weicht kurz vorher zur Seite und lässt Sebastian auf den Boden sinken, dennoch verlässt er seine Seite in diesem Moment nicht. Er bleibt direkt neben ihm sitzen, wirkt dabei sogar ein bisschen besorgt. Zumindest kann man das in seinem Blick reindeuten. Schwefels Augen, dieses nicht beschreibbare Gemisch aus den Farben Orange, Schwarz, Grün und Blau. Dieses Farbenschauspiel der Augen schaut auf das leere Gehäuse.</p>
+    <p>Der Behälter steht sogar noch. Leer und kalt. Aber er steht noch. Naja, um Haaresbreite — eine falsche Bewegung und er würde nicht mehr so dastehen.</p>
+    <p>Schwefel geht zum Behälter, stupst dagegen, als wolle er etwas testen. Es scheint, als wollte Schwefel testen, ob dieses Gefäß jetzt ungefährlich ist oder nicht. Aber sein Blick verrät, dass es jetzt sicher ist. Danach setzt sich Schwefel wie ein kleiner Wachhund neben Sebastian und schaut, aber wirklich nur manchmal und unauffällig, nur in seinem Augenwinkel, zu Sebastian rüber, ob es ihm auch wirklich noch, den Umständen entsprechend, gut geht.</p>
+    <p>Ach, Mann. Was macht denn Sebastian nur in diesen Welten. Irgendwie scheint er immer irgendwas zu machen, was ihn in Schwierigkeiten bringt.</p>
+    <p>Ich muss echt mal etwas genauer auf ihn achten. Das wird ja bald gefährlich, wenn das so weitergeht.</p>
+  </div>
+  <div class="chapter-footer">
+    <div class="footer-nav">
+      <a class="footer-btn" href="kapitel3.html">← Kapitel 3</a>
+    </div>
+    <span class="chapter-num-display">4 / 17</span>
+    <div class="footer-nav">
+      <a class="footer-btn" href="kapitel5.html">Kapitel 5 →</a>
+    </div>
+  </div>
+
+  <div id="comments-section" style="margin-top:64px;padding-top:32px;border-top:1px solid var(--border)">
+    <p style="font-family:'Inter',sans-serif;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--dim);margin-bottom:24px">Kommentare</p>
+    <p style="font-size:12px;color:var(--dim);font-family:'Inter',sans-serif;margin-bottom:24px;font-style:italic">Keine Kommentare sichtbar? Einfach die Seite neu laden — die Datenbank wacht kurz auf.</p>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:32px">
+      <input id="c-name" type="text" maxlength="40" placeholder="Dein Name"
+        style="width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;outline:none;margin-bottom:10px;box-sizing:border-box;transition:border-color .2s"
+        onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+      <textarea id="c-text" maxlength="1000" placeholder="Dein Feedback zu diesem Kapitel …" rows="3"
+        style="width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;font-family:'EB Garamond',serif;font-size:15px;line-height:1.6;outline:none;resize:vertical;margin-bottom:12px;transition:border-color .2s;box-sizing:border-box"
+        onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+      <div style="display:flex;align-items:center;gap:12px">
+        <button onclick="submitComment()"
+          style="background:var(--accent);color:#fff;border:none;padding:8px 20px;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer">
+          Absenden
+        </button>
+        <span id="c-status" style="font-size:12px;color:var(--muted);font-family:'Inter',sans-serif"></span>
+      </div>
+    </div>
+    <div id="c-list"></div>
+  </div>
+</main>
+
+<script>
+const SURL = 'https://ddnnppicepmcakkplkdc.supabase.co';
+const SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkbm5wcGljZXBtY2Fra3Bsa2RjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3NTYyNDAsImV4cCI6MjA5ODMzMjI0MH0.iY78eoxDxxBBCfl84sIEOQ1keEatG-IBnUZWh_TahZc';
+const CHAP = 'kapitel-4';
+const SH = {'apikey':SKEY,'Authorization':'Bearer '+SKEY,'Content-Type':'application/json'};
+
+async function loadComments() {
+  const list = document.getElementById('c-list');
+  try {
+    const res = await fetch(SURL+'/rest/v1/comments?chapter=eq.'+encodeURIComponent(CHAP)+'&order=created_at.asc',{headers:SH});
+    const data = await res.json();
+    if (!Array.isArray(data) || !data.length) {
+      list.innerHTML = '<p style="color:var(--dim);font-family:\'EB Garamond\',serif;font-style:italic">Noch keine Kommentare — sei der Erste!</p>';
+      return;
+    }
+    list.innerHTML = data.map(c => {
+      const d = new Date(c.created_at).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'});
+      return `<div style="padding:16px 0;border-bottom:1px solid var(--border)">
+        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:6px">
+          <span style="font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:var(--accent-light)">${escH(c.username)}</span>
+          <span style="font-family:'Inter',sans-serif;font-size:11px;color:var(--dim)">${d}</span>
+        </div>
+        <p style="font-family:'EB Garamond',serif;font-size:1.05rem;line-height:1.7;color:var(--text)">${escH(c.comment)}</p>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    list.innerHTML = '<p style="color:var(--dim);font-size:13px;font-family:\'Inter\',sans-serif">Laden fehlgeschlagen — Seite neu laden.</p>';
+  }
+}
+
+async function submitComment() {
+  const name = document.getElementById('c-name').value.trim();
+  const text = document.getElementById('c-text').value.trim();
+  const status = document.getElementById('c-status');
+  if (!name) { status.textContent='Bitte einen Namen eingeben.'; status.style.color='#c87a3a'; return; }
+  if (text.length < 3) { status.textContent='Bitte einen Kommentar schreiben.'; status.style.color='#c87a3a'; return; }
+  status.textContent='Wird gesendet …'; status.style.color='var(--muted)';
+  try {
+    const res = await fetch(SURL+'/rest/v1/comments',{
+      method:'POST', headers:SH,
+      body:JSON.stringify({chapter:CHAP, username:name, comment:text})
+    });
+    if (res.ok || res.status===201) {
+      document.getElementById('c-text').value='';
+      status.textContent='✓ Danke für dein Feedback!'; status.style.color='#5cb87a';
+      loadComments();
+    } else { status.textContent='Fehler — bitte nochmal.'; status.style.color='#c84040'; }
+  } catch(e) { status.textContent='Verbindungsfehler — Seite neu laden.'; status.style.color='#c84040'; }
+}
+
+function escH(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+document.addEventListener('DOMContentLoaded', loadComments);
+</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geschichten — Sebastian Beller</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#07080f;--surface:#0f1020;--surface2:#161828;--border:#1e2140;--accent:#6c5ce7;--accent-light:#a29bfe;--text:#ddd8f0;--muted:#7a76a0;--dim:#3a3660}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
+.stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+.stars::before,.stars::after{content:'';position:absolute;inset:0;background-image:radial-gradient(1px 1px at 20% 30%,rgba(255,255,255,.6),transparent),radial-gradient(1px 1px at 80% 10%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 50% 70%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 10% 60%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 90% 85%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 35% 15%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 65% 45%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 75% 55%,rgba(255,255,255,.6),transparent),radial-gradient(1.5px 1.5px at 25% 75%,rgba(170,150,255,.5),transparent),radial-gradient(1.5px 1.5px at 55% 25%,rgba(150,170,255,.4),transparent)}
+.stars::after{background-image:radial-gradient(1px 1px at 15% 20%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 85% 40%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 40% 80%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 70% 65%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 60% 5%,rgba(255,255,255,.5),transparent)}
+topnav{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;justify-content:flex-end;gap:8px;padding:12px 20px;background:rgba(7,8,15,.7);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+main{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:100px 24px 80px}
+header{text-align:center;margin-bottom:64px}
+h1{font-family:'EB Garamond',serif;font-size:clamp(2.4rem,6vw,3.6rem);font-weight:400;line-height:1.1;color:#f0eeff;margin-bottom:16px}
+.author{font-family:'EB Garamond',serif;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-light);margin-bottom:16px}
+.tagline{font-family:'EB Garamond',serif;font-size:1.05rem;color:var(--muted);font-style:italic}
+.divider{width:60px;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin:40px auto}
+.story-grid{display:flex;flex-direction:column;gap:14px}
+.story-card{display:flex;align-items:center;gap:20px;padding:24px 26px;border-radius:14px;border:1px solid var(--border);background:var(--surface);text-decoration:none;transition:all .2s}
+.story-card:hover{border-color:var(--accent);background:var(--surface2);transform:translateX(4px)}
+.story-info{flex:1}
+.story-title{font-family:'EB Garamond',serif;font-size:1.4rem;color:#f0eeff;margin-bottom:6px}
+.story-tagline{font-family:'EB Garamond',serif;font-size:.95rem;color:var(--muted);font-style:italic;line-height:1.5}
+.story-arrow{color:var(--dim);font-size:18px;transition:color .2s}
+.story-card:hover .story-arrow{color:var(--accent-light)}
+.tool-btn{display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:500;text-decoration:none;border:1px solid var(--border);color:var(--muted);background:var(--surface);transition:all .2s}
+.tool-btn:hover{border-color:var(--accent);color:var(--accent-light);background:var(--surface2)}
+.tool-btn svg{width:14px;height:14px;stroke:currentColor;fill:none}
+footer{text-align:center;margin-top:64px;font-size:12px;color:var(--dim);font-family:'EB Garamond',serif;font-style:italic}
+</style>
+</head>
+<body>
+<topnav>
+  <a href="manage.html" class="tool-btn">
+    <svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+    Neue Geschichte
+  </a>
+</topnav>
+<div class="stars"></div>
+<main>
+  <header>
+    <p class="author">Sebastian Beller</p>
+    <h1>Geschichten</h1>
+    <p class="tagline">Eine Sammlung erzählter Welten</p>
+  </header>
+  <div class="divider"></div>
+
+  <div class="story-grid">
+    <a class="story-card" href="cassandra/index.html">
+      <div class="story-info">
+        <div class="story-title">Cassandra</div>
+        <div class="story-tagline">Welten mit Fehlern und Folgen</div>
+      </div>
+      <span class="story-arrow">→</span>
+    </a>
+  </div>
+
+  <footer>Nur für Testleser — bitte nicht weitergeben</footer>
+</main>
+</body>
+</html>
