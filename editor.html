@@ -56,7 +56,7 @@ textarea::placeholder{color:var(--dim)}
 .index-toolbar{padding:16px 28px;border-bottom:1px solid var(--border);background:var(--surface);display:flex;align-items:center;gap:12px;flex-shrink:0}
 .index-toolbar p{font-size:13px;color:var(--muted);flex:1}
 .index-list{flex:1;overflow-y:auto;padding:24px 28px;display:flex;flex-direction:column;gap:8px}
-.index-row{display:grid;grid-template-columns:44px 1fr 140px;gap:12px;align-items:center;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:9px;transition:border-color .2s}
+.index-row{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:center;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:9px;transition:border-color .2s}
 .index-row:focus-within{border-color:var(--accent)}
 .index-row-num{font-size:12px;color:var(--muted);font-weight:500;text-align:center}
 .index-row input{background:transparent;border:none;color:var(--text);font-family:'EB Garamond',serif;font-size:15px;outline:none;width:100%}
@@ -202,20 +202,9 @@ function getTitles() {
   return Array(story.totalChapters || 10).fill('');
 }
 
-function getStatuses() {
-  const story = getCurrentStory();
-  try {
-    const s = JSON.parse(localStorage.getItem('cass_statuses_' + story.slug));
-    if (s) return s;
-  } catch(e) {}
-  if (story.slug === 'cassandra') return [...DEFAULT_STATUS_CASSANDRA];
-  return Array(story.totalChapters || 10).fill('planned');
-}
-
-function saveTitles(t, s) {
+function saveTitles(t) {
   const story = getCurrentStory();
   localStorage.setItem('cass_titles_' + story.slug, JSON.stringify(t));
-  localStorage.setItem('cass_statuses_' + story.slug, JSON.stringify(s));
 }
 
 function switchTab(tab) {
@@ -228,7 +217,6 @@ function switchTab(tab) {
 
 function buildIndexList() {
   const titles = getTitles();
-  const statuses = getStatuses();
   const list = document.getElementById('indexList');
   list.innerHTML = '';
   titles.forEach((title, i) => {
@@ -236,30 +224,23 @@ function buildIndexList() {
     row.className = 'index-row';
     row.innerHTML = `
       <span class="index-row-num">${String(i+1).padStart(2,'0')}</span>
-      <input type="text" value="${escAttr(title)}" placeholder="Titel Kapitel ${i+1}" oninput="saveIndexChange(${i}, 'title', this.value)">
-      <select class="status-select" onchange="saveIndexChange(${i}, 'status', this.value)">
-        <option value="available" ${statuses[i]==='available'?'selected':''}>✓ Verfügbar</option>
-        <option value="planned" ${statuses[i]==='planned'?'selected':''}>○ Bald</option>
-      </select>
+      <input type="text" value="${escAttr(title)}" placeholder="Titel Kapitel ${i+1}" oninput="saveIndexChange(${i}, this.value)">
     `;
     list.appendChild(row);
   });
 }
 
-function saveIndexChange(idx, field, val) {
+function saveIndexChange(idx, val) {
   const titles = getTitles();
-  const statuses = getStatuses();
-  if (field==='title') titles[idx] = val;
-  if (field==='status') statuses[idx] = val;
-  saveTitles(titles, statuses);
+  titles[idx] = val;
+  saveTitles(titles);
   updatePreview();
 }
 
 function resetTitles() {
   const story = getCurrentStory();
-  if (!confirm('Alle Titel und Status für "' + story.title + '" auf Standard zurücksetzen?')) return;
+  if (!confirm('Alle Titel für "' + story.title + '" auf Standard zurücksetzen?')) return;
   localStorage.removeItem('cass_titles_' + story.slug);
-  localStorage.removeItem('cass_statuses_' + story.slug);
   buildIndexList();
 }
 
@@ -469,29 +450,12 @@ document.addEventListener('DOMContentLoaded',loadComments);
 
 function downloadIndex() {
   const titles = getTitles();
-  const statuses = getStatuses();
   const story = getCurrentStory();
-
-  const rows = titles.map((title, i) => {
-    const num = i + 1;
-    const numStr = String(num).padStart(2, '0');
-    if (statuses[i] === 'available') {
-      return `    <a class="chapter available" href="kapitel/kapitel${num}.html">
-      <span class="chapter-num">${numStr}</span>
-      <span class="chapter-title">${esc(title)}</span>
-      <span class="chapter-badge badge-ready">Verfügbar</span>
-      <span class="arrow">→</span>
-    </a>`;
-    } else {
-      return `    <div class="chapter planned">
-      <span class="chapter-num">${numStr}</span>
-      <span class="chapter-title">${esc(title)}</span>
-      <span class="chapter-badge badge-soon">Bald</span>
-    </div>`;
-    }
-  }).join('\n');
-
+  const total = story.totalChapters || titles.length;
   const hasRoadmap = story.slug === 'cassandra';
+
+  const titlesJsArray = JSON.stringify(titles);
+
   const roadmapBtn = hasRoadmap ? `
     <a href="roadmap.html" class="tool-btn">
       <svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z"/></svg>
@@ -508,7 +472,7 @@ function downloadIndex() {
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#07080f;--surface:#0f1020;--surface2:#161828;--border:#1e2140;--accent:#6c5ce7;--accent-light:#a29bfe;--text:#ddd8f0;--muted:#7a76a0;--dim:#3a3660}
+:root{--bg:#07080f;--surface:#0f1020;--surface2:#161828;--border:#1e2140;--accent:#6c5ce7;--accent-light:#a29bfe;--text:#ddd8f0;--muted:#7a76a0;--dim:#3a3660;--amber:#c8a030;--amber-light:#e0c068}
 body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
 .stars{position:fixed;inset:0;pointer-events:none;z-index:0}
 .stars::before,.stars::after{content:'';position:absolute;inset:0;background-image:radial-gradient(1px 1px at 20% 30%,rgba(255,255,255,.6),transparent),radial-gradient(1px 1px at 80% 10%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 50% 70%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 10% 60%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 90% 85%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 35% 15%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 65% 45%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 75% 55%,rgba(255,255,255,.6),transparent),radial-gradient(1.5px 1.5px at 25% 75%,rgba(170,150,255,.5),transparent),radial-gradient(1.5px 1.5px at 55% 25%,rgba(150,170,255,.4),transparent)}
@@ -527,18 +491,22 @@ h1{font-family:'EB Garamond',serif;font-size:clamp(2.4rem,6vw,3.8rem);font-weigh
 .chapter{display:flex;align-items:center;gap:16px;padding:14px 18px;border-radius:10px;border:1px solid transparent;text-decoration:none;transition:all .2s;cursor:default}
 .chapter.available{border-color:var(--border);background:var(--surface);cursor:pointer}
 .chapter.available:hover{border-color:var(--accent);background:var(--surface2);transform:translateX(4px)}
+.chapter.writing{border-color:var(--border);background:var(--surface);cursor:pointer}
+.chapter.writing:hover{border-color:var(--amber);background:var(--surface2);transform:translateX(4px)}
 .chapter.planned{opacity:.35}
 .chapter-num{font-size:12px;color:var(--muted);font-weight:500;min-width:28px;letter-spacing:.05em}
 .chapter-title{font-family:'EB Garamond',serif;font-size:1.05rem;color:var(--text);flex:1}
-.chapter.available .chapter-title{color:#e8e4ff}
-.chapter-badge{font-size:10px;padding:3px 10px;border-radius:20px;font-weight:500;letter-spacing:.05em}
+.chapter.available .chapter-title,.chapter.writing .chapter-title{color:#e8e4ff}
+.chapter-badge{font-size:10px;padding:3px 10px;border-radius:20px;font-weight:500;letter-spacing:.05em;white-space:nowrap}
 .badge-ready{background:#1a1635;color:var(--accent-light);border:1px solid var(--accent)}
+.badge-writing{background:#211c0f;color:var(--amber-light);border:1px solid var(--amber)}
 .badge-soon{background:transparent;color:var(--dim);border:1px solid var(--dim)}
 .arrow{color:var(--dim);font-size:14px;transition:color .2s;margin-left:4px}
-.chapter.available:hover .arrow{color:var(--accent-light)}
+.chapter.available:hover .arrow,.chapter.writing:hover .arrow{color:var(--accent-light)}
 .tool-btn{display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:500;text-decoration:none;border:1px solid var(--border);color:var(--muted);background:var(--surface);transition:all .2s}
 .tool-btn:hover{border-color:var(--accent);color:var(--accent-light);background:var(--surface2)}
 .tool-btn svg{width:14px;height:14px;stroke:currentColor;fill:none}
+.loading-hint{color:var(--dim);font-family:'EB Garamond',serif;font-style:italic;text-align:center;padding:30px 0}
 footer{text-align:center;margin-top:64px;font-size:12px;color:var(--dim);font-family:'EB Garamond',serif;font-style:italic}
 </style>
 </head>
@@ -560,11 +528,66 @@ footer{text-align:center;margin-top:64px;font-size:12px;color:var(--dim);font-fa
   </header>
   <div class="divider"></div>
   <p class="section-label">Kapitel</p>
-  <div class="chapter-list">
-${rows}
+  <div class="chapter-list" id="chapterList">
+    <p class="loading-hint">Kapitel werden geprüft …</p>
   </div>
   <footer>Nur für Testleser — bitte nicht weitergeben</footer>
 </main>
+
+<script>
+const TOTAL = ${total};
+const FALLBACK_TITLES = ${titlesJsArray};
+
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+async function checkChapter(num) {
+  const path = \`kapitel/kapitel\${num}.html\`;
+  try {
+    const res = await fetch(path, { cache: 'no-store' });
+    if (!res.ok) return { num, state: 'planned', title: FALLBACK_TITLES[num-1] || \`Kapitel \${num}\` };
+    const text = await res.text();
+    const doc = new DOMParser().parseFromString(text, 'text/html');
+    const h1 = doc.querySelector('h1');
+    const title = (h1 && h1.textContent.trim()) || FALLBACK_TITLES[num-1] || \`Kapitel \${num}\`;
+    const bodyText = doc.querySelector('.chapter-body');
+    const isWriting = bodyText && bodyText.textContent.includes('wird gerade geschrieben');
+    return { num, state: isWriting ? 'writing' : 'available', title, path };
+  } catch(e) {
+    return { num, state: 'planned', title: FALLBACK_TITLES[num-1] || \`Kapitel \${num}\` };
+  }
+}
+
+async function buildList() {
+  const checks = await Promise.all(Array.from({length: TOTAL}, (_, i) => checkChapter(i+1)));
+  const list = document.getElementById('chapterList');
+  list.innerHTML = checks.map(c => {
+    const numStr = String(c.num).padStart(2,'0');
+    if (c.state === 'available') {
+      return \`<a class="chapter available" href="\${c.path}">
+        <span class="chapter-num">\${numStr}</span>
+        <span class="chapter-title">\${esc(c.title)}</span>
+        <span class="chapter-badge badge-ready">Verfügbar</span>
+        <span class="arrow">→</span>
+      </a>\`;
+    } else if (c.state === 'writing') {
+      return \`<a class="chapter writing" href="\${c.path}">
+        <span class="chapter-num">\${numStr}</span>
+        <span class="chapter-title">\${esc(c.title)}</span>
+        <span class="chapter-badge badge-writing">In Arbeit</span>
+        <span class="arrow">→</span>
+      </a>\`;
+    } else {
+      return \`<div class="chapter planned">
+        <span class="chapter-num">\${numStr}</span>
+        <span class="chapter-title">\${esc(c.title)}</span>
+        <span class="chapter-badge badge-soon">Bald</span>
+      </div>\`;
+    }
+  }).join('');
+}
+
+buildList();
+<\/script>
 </body>
 </html>`;
 
