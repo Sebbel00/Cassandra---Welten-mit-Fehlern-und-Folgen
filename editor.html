@@ -94,19 +94,13 @@ textarea::placeholder{color:var(--dim)}
             <input type="text" id="kapTitle" placeholder="wird aus Index übernommen …" oninput="updatePreview()">
           </div>
         </div>
-        <div class="row">
-          <div class="field">
-            <label>Vorheriges Kapitel</label>
-            <input type="text" id="prevTitle" placeholder="automatisch …" oninput="updatePreview()">
-          </div>
-          <div class="field">
-            <label>Nächstes Kapitel</label>
-            <input type="text" id="nextTitle" placeholder="automatisch …" oninput="updatePreview()">
-          </div>
-        </div>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);cursor:pointer;padding:6px 2px">
+          <input type="checkbox" id="isPlaceholder" onchange="togglePlaceholder()" style="width:16px;height:16px;cursor:pointer">
+          Nur Platzhalter erstellen (Kapitel ist noch in Arbeit — Navigation &amp; Kommentare funktionieren bereits)
+        </label>
       </div>
       <textarea id="rawText" placeholder="Rohtext des Kapitels hier einfügen …&#10;&#10;Leerzeile = neuer Absatz&#10;**fett**   *kursiv*" oninput="updatePreview()"></textarea>
-      <div class="hint">Tipp: Leerzeile zwischen Absätzen. **Text** = fett · *Text* = kursiv</div>
+      <div class="hint">Tipp: Leerzeile zwischen Absätzen. **Text** = fett · *Text* = kursiv · Vorheriges/Nächstes Kapitel wird automatisch anhand der Nummer verlinkt</div>
     </div>
 
     <div class="panel">
@@ -236,25 +230,38 @@ function parseText(raw) {
   }).filter(Boolean).join('\n    ');
 }
 
+function togglePlaceholder() {
+  const isPh = document.getElementById('isPlaceholder').checked;
+  const textarea = document.getElementById('rawText');
+  textarea.disabled = isPh;
+  textarea.style.opacity = isPh ? '0.4' : '1';
+  updatePreview();
+}
+
 function updatePreview() {
   const titles = getTitles();
   const num = parseInt(document.getElementById('kapNum').value) || 1;
   const titleInput = document.getElementById('kapTitle').value;
+  const isPh = document.getElementById('isPlaceholder').checked;
   const title = titleInput || titles[num-1] || 'Kein Titel';
   const raw = document.getElementById('rawText').value;
-  document.getElementById('previewBadge').textContent = `Kapitel ${num}`;
+  document.getElementById('previewBadge').textContent = `Kapitel ${num}` + (isPh ? ' · Platzhalter' : '');
 
   if (!titleInput && titles[num-1]) {
     document.getElementById('kapTitle').placeholder = titles[num-1];
   }
-  if (!document.getElementById('prevTitle').value && titles[num-2]) {
-    document.getElementById('prevTitle').placeholder = titles[num-2];
-  }
-  if (!document.getElementById('nextTitle').value && titles[num]) {
-    document.getElementById('nextTitle').placeholder = titles[num];
-  }
 
   const preview = document.getElementById('preview');
+
+  if (isPh) {
+    preview.innerHTML = `
+      <span class="chapter-label">Kapitel ${num} von 17</span>
+      <h1>${esc(title || ('Kapitel ' + num))}</h1>
+      <div class="preview-body"><p style="font-style:italic;color:var(--dim)">Dieses Kapitel wird gerade geschrieben. Schau gern bald wieder vorbei — und hinterlasse jetzt schon Gedanken oder Wünsche in den Kommentaren!</p></div>
+    `;
+    return;
+  }
+
   if (!raw.trim()) {
     preview.innerHTML = '<p class="empty-state">Text links eingeben …</p>';
     return;
@@ -269,12 +276,14 @@ function updatePreview() {
 function downloadChapter() {
   const titles = getTitles();
   const num = parseInt(document.getElementById('kapNum').value) || 1;
+  const isPh = document.getElementById('isPlaceholder').checked;
   const title = document.getElementById('kapTitle').value || titles[num-1] || 'Kapitel '+num;
   const prevNum = num > 1 ? num-1 : null;
   const nextNum = num < 17 ? num+1 : null;
-  const prevTitle = document.getElementById('prevTitle').value || (prevNum ? titles[prevNum-1] : '') || '';
-  const nextTitle = document.getElementById('nextTitle').value || (nextNum ? titles[nextNum-1] : '') || '';
-  const bodyHTML = parseText(document.getElementById('rawText').value);
+
+  const bodyHTML = isPh
+    ? '<p style="font-style:italic;color:var(--dim)">Dieses Kapitel wird gerade geschrieben. Schau gern bald wieder vorbei — und hinterlasse jetzt schon Gedanken oder Wünsche in den Kommentaren!</p>'
+    : parseText(document.getElementById('rawText').value);
 
   const prevLink = prevNum ? `kapitel${prevNum}.html` : '#';
   const nextLink = nextNum ? `kapitel${nextNum}.html` : '#';
@@ -336,11 +345,11 @@ h1{font-family:'EB Garamond',serif;font-size:clamp(1.8rem,5vw,2.8rem);font-weigh
   </div>
   <div class="chapter-footer">
     <div class="footer-nav">
-      <a class="footer-btn${prevClass}" href="${prevLink}">← ${esc(prevTitle)}</a>
+      <a class="footer-btn${prevClass}" href="${prevLink}">← Kapitel ${prevNum||''}</a>
     </div>
     <span class="chapter-num-display">${num} / 17</span>
     <div class="footer-nav">
-      <a class="footer-btn${nextClass}" href="${nextLink}">${esc(nextTitle)} →</a>
+      <a class="footer-btn${nextClass}" href="${nextLink}">Kapitel ${nextNum||''} →</a>
     </div>
   </div>
 
