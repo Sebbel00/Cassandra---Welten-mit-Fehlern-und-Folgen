@@ -8,26 +8,16 @@
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --bg:#07080f;
-  --surface:#0f1020;
-  --surface2:#161828;
-  --border:#1e2140;
-  --accent:#6c5ce7;
-  --accent-light:#a29bfe;
-  --text:#ddd8f0;
-  --muted:#7a76a0;
-  --dim:#3a3660;
-}
+:root{--bg:#07080f;--surface:#0f1020;--surface2:#161828;--border:#1e2140;--accent:#6c5ce7;--accent-light:#a29bfe;--text:#ddd8f0;--muted:#7a76a0;--dim:#3a3660}
 body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
 .stars{position:fixed;inset:0;pointer-events:none;z-index:0}
-.stars::before,.stars::after{content:'';position:absolute;inset:0;background-image:radial-gradient(1px 1px at 20% 30%,rgba(255,255,255,.6),transparent),radial-gradient(1px 1px at 80% 10%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 50% 70%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 10% 60%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 90% 85%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 35% 15%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 65% 45%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 5% 90%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 75% 55%,rgba(255,255,255,.6),transparent),radial-gradient(1px 1px at 45% 95%,rgba(255,255,255,.3),transparent),radial-gradient(1.5px 1.5px at 25% 75%,rgba(170,150,255,.5),transparent),radial-gradient(1.5px 1.5px at 55% 25%,rgba(150,170,255,.4),transparent)}
-.stars::after{background-image:radial-gradient(1px 1px at 15% 20%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 85% 40%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 40% 80%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 70% 65%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 30% 50%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 60% 5%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 95% 25%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 3% 45%,rgba(255,255,255,.4),transparent)}
+.stars::before,.stars::after{content:'';position:absolute;inset:0;background-image:radial-gradient(1px 1px at 20% 30%,rgba(255,255,255,.6),transparent),radial-gradient(1px 1px at 80% 10%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 50% 70%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 10% 60%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 90% 85%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 35% 15%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 65% 45%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 75% 55%,rgba(255,255,255,.6),transparent),radial-gradient(1.5px 1.5px at 25% 75%,rgba(170,150,255,.5),transparent),radial-gradient(1.5px 1.5px at 55% 25%,rgba(150,170,255,.4),transparent)}
+.stars::after{background-image:radial-gradient(1px 1px at 15% 20%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 85% 40%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 40% 80%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 70% 65%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 60% 5%,rgba(255,255,255,.5),transparent)}
 main{position:relative;z-index:1;max-width:720px;margin:0 auto;padding:60px 24px 80px}
 header{text-align:center;margin-bottom:64px}
-.subtitle-small{font-family:'EB Garamond',serif;font-size:14px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-light);margin-bottom:20px}
-h1{font-family:'EB Garamond',serif;font-size:clamp(2.4rem,6vw,3.8rem);font-weight:400;line-height:1.1;color:#f0eeff;margin-bottom:16px;letter-spacing:-.01em}
+h1{font-family:'EB Garamond',serif;font-size:clamp(2.4rem,6vw,3.8rem);font-weight:400;line-height:1.1;color:#f0eeff;margin-bottom:16px}
 .tagline{font-family:'EB Garamond',serif;font-size:1.1rem;color:var(--muted);font-style:italic}
+.author{font-family:'EB Garamond',serif;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-light);margin-bottom:16px}
 .divider{width:60px;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin:40px auto}
 .section-label{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--dim);margin-bottom:20px;font-weight:500}
 .chapter-list{display:flex;flex-direction:column;gap:4px}
@@ -46,26 +36,14 @@ h1{font-family:'EB Garamond',serif;font-size:clamp(2.4rem,6vw,3.8rem);font-weigh
 .nav-tools{margin-top:48px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:center;gap:12px}
 .tool-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:500;text-decoration:none;border:1px solid var(--border);color:var(--muted);background:var(--surface);transition:all .2s}
 .tool-btn:hover{border-color:var(--accent);color:var(--accent-light);background:var(--surface2)}
-.tool-btn svg{width:14px;height:14px;stroke:currentColor;fill:none}
 footer{text-align:center;margin-top:64px;font-size:12px;color:var(--dim);font-family:'EB Garamond',serif;font-style:italic}
-topnav{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;justify-content:flex-end;gap:8px;padding:12px 20px;background:rgba(7,8,15,.7);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
 </style>
 </head>
 <body>
-<topnav>
-  <a href="roadmap.html" class="tool-btn">
-    <svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z"/></svg>
-    Roadmap
-  </a>
-  <a href="editor.html" class="tool-btn">
-    <svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/></svg>
-    Editor
-  </a>
-</topnav>
 <div class="stars"></div>
-<main style="padding-top:80px">
+<main>
   <header>
-    <p class="subtitle-label" style="font-family:'EB Garamond',serif;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-light);margin-bottom:16px">Sebastian Beller</p>
+    <p class="author">Sebastian Beller</p>
     <h1>Cassandra</h1>
     <p class="tagline">Welten mit Fehlern und Folgen</p>
   </header>
@@ -92,7 +70,7 @@ topnav{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;justify-conte
     </a>
     <div class="chapter planned">
       <span class="chapter-num">04</span>
-      <span class="chapter-title">Erster Durchgang — Magiewelt</span>
+      <span class="chapter-title">Manatransfer und Dämonenfüchse?</span>
       <span class="chapter-badge badge-soon">Bald</span>
     </div>
     <div class="chapter planned">
@@ -122,17 +100,17 @@ topnav{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;justify-conte
     </div>
     <div class="chapter planned">
       <span class="chapter-num">10</span>
-      <span class="chapter-title">Die rote Figur — Zweiter Durchgang</span>
+      <span class="chapter-title">Die rote Figur — Zweiter Durchgang beginnt</span>
       <span class="chapter-badge badge-soon">Bald</span>
     </div>
     <div class="chapter planned">
       <span class="chapter-num">11</span>
-      <span class="chapter-title">Zweiter Durchgang — Spice-and-Wolf &amp; Magie</span>
+      <span class="chapter-title">Zweiter Durchgang — Spice-and-Wolf &amp; Magiewelt</span>
       <span class="chapter-badge badge-soon">Bald</span>
     </div>
     <div class="chapter planned">
       <span class="chapter-num">12</span>
-      <span class="chapter-title">Zweiter Durchgang — Steinzeit &amp; One-Punch-Man</span>
+      <span class="chapter-title">Zweiter Durchgang — Steinzeitwelt &amp; One-Punch-Man</span>
       <span class="chapter-badge badge-soon">Bald</span>
     </div>
     <div class="chapter planned">
@@ -160,6 +138,12 @@ topnav{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;justify-conte
       <span class="chapter-title">Kollaps</span>
       <span class="chapter-badge badge-soon">Bald</span>
     </div>
+  </div>
+  <div class="nav-tools">
+    <a href="editor.html" class="tool-btn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/></svg>
+      Kapitel-Editor
+    </a>
   </div>
   <footer>Nur für Testleser — bitte nicht weitergeben</footer>
 </main>
